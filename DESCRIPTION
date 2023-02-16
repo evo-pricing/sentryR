@@ -1,21 +1,22 @@
 Package: sentryR
 Type: Package
 Title: Send Errors and Messages to Sentry
-Version: 1.1.1.9000
+Version: 1.1.2
 Authors@R: c(
+  person("Davide", "Dal Farra", email = "davide@codref.org"),
   person("Joao", "Santiago", email = "santiago@billie.io", role = c("aut", "cre")),
   person("Daniel", "Kirsch", role = "aut", email = "daniel@billie.io"),
   # copyright holders
   person("Billie", role = c("cph", "fnd")))
-Description: Unofficial client for 'Sentry' <https://sentry.io>,
+Description: Fork of the unofficial client for 'Sentry' <https://sentry.io>,
   a self-hosted or cloud-based error-monitoring service. It will inform about
   errors in real-time, and includes integration with the 'Plumber' package.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 ByteCompile: true
-URL: https://github.com/ozean12/sentryR
-BugReports: https://github.com/ozean12/sentryR/issues
+URL: https://github.com/evo-pricing/sentryR
+BugReports: https://github.com/evo-pricing/sentryR/issues
 RoxygenNote: 7.0.2
 Imports: 
   httr,
@@ -23,7 +24,8 @@ Imports:
   stringr,
   stats,
   tibble,
-  uuid
+  uuid,
+  snakecase
 Suggests: 
   covr,
   httptest,

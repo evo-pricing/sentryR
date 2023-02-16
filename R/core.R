@@ -62,6 +62,7 @@ parse_dsn <- function(dsn) {
 #' sentry_env$host # sentry.io
 #' }
 configure_sentry <- function(dsn, app_name = NULL, app_version = NULL,
+                             release = NULL,
                              environment = NULL, ...) {
   if (length(dsn) > 1) {
     stop("Expected one dsn, but received ", length(dsn), " instead.")
@@ -72,6 +73,7 @@ configure_sentry <- function(dsn, app_name = NULL, app_version = NULL,
   dsn_vars <- parse_dsn(dsn)
 
   user_vars <- list(
+    release = release,
     environment = environment,
     contexts = list(
       app = list(
@@ -296,8 +298,12 @@ capture_exception <- function(error, ..., level = "error") {
     stacktrace <- calls_to_stacktrace(sys.calls())
   }
 
-  error_type <- class(error)[[1]]
+  # error_type <- class(error)[[1]]
   error_message <- gsub('(\\n|\\")', "", as.character(error))
+  error_type <- snakecase::to_title_case(
+    remove_words(stringr::str_split(error_message,":")[[1]][2]),
+    sep_out = ''
+  )
 
   # tibble allows list-columns, which jsonlite translate to array of maps
   exception_payload <- list(

@@ -9,3 +9,9 @@ rm_null_obs <- function(x) {
   x <- Filter(Negate(is_null_obs), x)
   lapply(x, function(x) if (is.list(x)) rm_null_obs(x) else x)
 }
+
+remove_words <- function(x) {
+  wordsToRemove <- c("the","an", "of", "or", "in", "a", "and", "that", "be", "to")
+  regex <- paste0("\\s*\\b(", paste(wordsToRemove, collapse="|"), ")\\b")
+  return(sub("^\\s+", "", gsub(regex, "", x, ignore.case=TRUE)))
+}

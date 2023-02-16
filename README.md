@@ -1,28 +1,16 @@
-[![R-CMD-check](https://github.com/ozean12/sentryR/workflows/R-CMD-check/badge.svg)](https://github.com/ozean12/sentryR/actions)
-[![Coverage status](https://codecov.io/gh/ozean12/sentryR/branch/master/graph/badge.svg)](https://codecov.io/github/ozean12/sentryR?branch=master)
-[![CRAN status](https://www.r-pkg.org/badges/version/sentryR)](https://CRAN.R-project.org/package=sentryR)
-[![Lifecycle: stable](https://img.shields.io/badge/lifecycle-stable-brightgreen.svg)](https://www.tidyverse.org/lifecycle/#stable)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
 
 # sentryR <img src="man/figures/logo.png" align="right" width="200px"/>
 
-`sentryR` is an unofficial R client for [Sentry](https://sentry.io).
+This is a Fork of `sentryR` is an unofficial R client for [Sentry](https://sentry.io).
 It includes an error handler for Plumber for uncaught exceptions.
 
 ## Installation
 You can install the latest development version of `sentryR` with:
 
 ``` r
-# install.packages("remotes")
-remotes::install_github("ozean12/sentryR")
+remotes::install_github("evo-pricing/sentryR")
 ```
-
-or the stable version in CRAN with:
-
-```r
-install.packages("sentryR")
-```
-
 
 ## Using sentryR
 
@@ -39,6 +27,7 @@ library(sentryR)
 configure_sentry(dsn = Sys.getenv("SENTRY_DSN"),
                  app_name = "myapp", app_version = "8.8.8",
                  environment = Sys.getenv("APP_ENV"),
+                 release = "v1.0.4@248a78010e35caca0b7a130226f93d6c6fee1a6f",
                  tags = list(foo = "tag1", bar = "tag2"),
                  runtime = NULL)
 
@@ -151,6 +140,47 @@ shinyServer(function(input, output) {
     # Define server logic
     ...
 }
+```
+
+## Example with plain R code
+
+```r
+library(sentryR)
+library(rlang)
+
+configure_sentry(dsn = Sys.getenv('SENTRY_DSN'),
+                 app_name = "sentry-r-integration-example", app_version = "v1.0.4",
+                 environment = "local",
+                 release = "v1.0.4@248a78010e35caca0b7a130226f93d6c6fee1a6f",
+                 tags = list(foo = "bar"),
+                 runtime = NULL)
+
+
+
+get_last_error <- function()
+{
+  tr <- trace_back()
+  if(length(tr) == 0)
+  {
+    return("unknownError")
+  }
+  tryCatch(eval(parse(text = tr[[1]])), error = identity)
+}
+
+options(
+  rlang_trace_top_env = current_env(),
+  error = function() {
+    capture_exception(get_last_error())
+})
+
+f <- function(a) g(a)
+g <- function(b) h(b)
+h <- function(c) i(c)
+i <- function(d) "a" + d
+h(10)
+
+cat("wont execute")
+
 ```
 
 ## TODO
